@@ -37,7 +37,7 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 [P] Create StockItem domain class enforcing `availableQty >= 0` (verbatim invariant) in src/main/java/com/example/inventory_service/domain/StockItem.java
+- [X] T007 [P] Create StockItem domain class enforcing `availableQty >= 0` (verbatim invariant) in src/main/java/com/example/inventory_service/domain/StockItem.java
 - [ ] T008 [P] Create value objects ReservationItem (`quantity minimum: 1`), MissingSku (`reason enum INSUFFICIENT_STOCK, UNKNOWN_SKU, INVALID_QUANTITY, INVALID_REQUEST`), ReservationOutcome (`eventVersion const: v1`, `decidedAt format: date-time`) in src/main/java/com/example/inventory_service/domain/
 - [ ] T009 Create Reservation aggregate (all-or-nothing evaluate, insert-once immutable outcome, `orderId maxLength: 64`) in src/main/java/com/example/inventory_service/domain/Reservation.java (depends on T007, T008)
 - [ ] T010 [P] Create ports ReserveStockUseCase, InventoryPort, OutcomePublisher, AuditStore in src/main/java/com/example/inventory_service/application/port/
