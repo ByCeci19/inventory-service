@@ -39,7 +39,7 @@
 
 - [X] T007 [P] Create StockItem domain class enforcing `availableQty >= 0` (verbatim invariant) in src/main/java/com/example/inventory_service/domain/StockItem.java
 - [X] T008 [P] Create value objects ReservationItem (`quantity minimum: 1`), MissingSku (`reason enum INSUFFICIENT_STOCK, UNKNOWN_SKU, INVALID_QUANTITY, INVALID_REQUEST`), ReservationOutcome (`eventVersion const: v1`, `decidedAt format: date-time`) in src/main/java/com/example/inventory_service/domain/
-- [ ] T009 Create Reservation aggregate (all-or-nothing evaluate, insert-once immutable outcome, `orderId maxLength: 64`) in src/main/java/com/example/inventory_service/domain/Reservation.java (depends on T007, T008)
+- [X] T009 Create Reservation aggregate (all-or-nothing evaluate, insert-once immutable outcome, `orderId maxLength: 64`) in src/main/java/com/example/inventory_service/domain/Reservation.java (depends on T007, T008)
 - [ ] T010 [P] Create ports ReserveStockUseCase, InventoryPort, OutcomePublisher, AuditStore in src/main/java/com/example/inventory_service/application/port/
 - [ ] T011 [P] Create JPA entities + repositories (ReservationEntity with UNIQUE `orderId` indexed, StockItemEntity; JPQL only, no native queries; DDL owns the UNIQUE constraint — conflict re-read handling belongs to T032) in src/main/java/com/example/inventory_service/infrastructure/persistence/jpa/
 - [ ] T012 Create InventoryPort JPA adapter (load stock snapshot, save decrements + reservation row in one transaction) in src/main/java/com/example/inventory_service/infrastructure/persistence/jpa/JpaInventoryAdapter.java (depends on T010, T011)
