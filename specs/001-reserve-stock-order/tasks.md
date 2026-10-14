@@ -27,7 +27,7 @@
 - [X] T003 [P] Consolidate configuration into a single src/main/resources/application.yml (retire src/main/resources/application.properties to avoid dual sources): SCS bindings (maxAttempts=4, exponential backOff intervals, enableDlq, DLQ topic inventory.reservation.requests.dlq per contracts/asyncapi.yaml), datasource profiles, data-mongo, flyway (validate in prod, disabled in tests where H2 + JPA create-drop applies)
 - [X] T004 [P] Snapshot reviewed contracts to src/main/resources/contracts/openapi.yaml and src/main/resources/contracts/asyncapi.yaml
 - [X] T005 [P] Configure orderId-correlated logging (MDC %X{orderId} in pattern) in src/main/resources/logback-spring.xml
-- [ ] T006 Verify baseline green with ./gradlew test (existing contextLoads must pass before further work)
+- [X] T006 Verify baseline green with ./gradlew test (existing contextLoads must pass before further work)
 
 ---
 
