@@ -1,0 +1,99 @@
+openapi: 3.1.0
+info:
+  title: Inventory Service — Reservations
+  version: 1.0.0
+  description: >
+    Synchronous intake for idempotent stock reservations (feature
+    001-reserve-stock-order). Business failure (insufficient stock) is a 200
+    outcome, not an HTTP error. Every outcome is also published as a versioned
+    event — see asyncapi.yaml.
+servers:
+  - url: http://localhost:{port}/api/v1
+    variables:
+      port:
+        default: "8080"
+paths:
+  /reservations:
+    post:
+      operationId: reserveStock
+      summary: Reserve stock for an order (idempotent by orderId)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservationRequest'
+      responses:
+        "200":
+          description: Stored outcome — identical on retries with the same orderId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationOutcome'
+        "400":
+          description: Invalid request (empty items, zero/negative quantity)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReservationOutcome'
+components:
+  schemas:
+    ReservationRequest:
+      type: object
+      required: [orderId, items]
+      properties:
+        orderId:
+          type: string
+          maxLength: 64
+          example: order-1
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/OrderLine'
+    OrderLine:
+      type: object
+      required: [sku, quantity]
+      properties:
+        sku:
+          type: string
+          maxLength: 64
+          example: SKU-A
+        quantity:
+          type: integer
+          minimum: 1
+          example: 3
+    ReservationOutcome:
+      type: object
+      required: [eventVersion, orderId, status, decidedAt]
+      properties:
+        eventVersion:
+          type: string
+          const: v1
+        orderId:
+          type: string
+          example: order-1
+        status:
+          type: string
+          enum: [RESERVED, FAILED]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLine'
+        missingSkus:
+          type: array
+          items:
+            $ref: '#/components/schemas/MissingSku'
+        decidedAt:
+          type: string
+          format: date-time
+    MissingSku:
+      type: object
+      required: [sku, reason]
+      properties:
+        sku:
+          type: string
+          example: SKU-B
+        reason:
+          type: string
+          enum: [INSUFFICIENT_STOCK, UNKNOWN_SKU, INVALID_QUANTITY, INVALID_REQUEST]

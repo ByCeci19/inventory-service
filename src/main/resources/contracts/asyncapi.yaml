@@ -1,0 +1,144 @@
+asyncapi: 3.0.0
+info:
+  title: Inventory Service — Reservation Outcomes
+  version: 1.0.0
+  description: >
+    Versioned outcome events for feature 001-reserve-stock-order. Every message
+    carries eventVersion (v1 at launch); breaking changes require v2.
+    Consumers are idempotent on orderId; poison messages land on the DLQ after
+    3 retries with exponential backoff.
+servers:
+  kafka:
+    host: ${KAFKA_BOOTSTRAP_SERVERS}
+    protocol: kafka
+    description: Kafka via Spring Cloud Stream binder
+channels:
+  reservationRequests:
+    address: inventory.reservation.requests
+    messages:
+      reservationRequested:
+        $ref: '#/components/messages/ReservationRequested'
+  reservationDecisions:
+    address: inventory.reservation.decisions
+    messages:
+      inventoryReserved:
+        $ref: '#/components/messages/InventoryReserved'
+      inventoryReservationFailed:
+        $ref: '#/components/messages/InventoryReservationFailed'
+  reservationDlq:
+    address: inventory.reservation.requests.dlq
+    description: Poison messages after 3 retries (exp backoff); orderId header preserved
+    messages:
+      deadLettered:
+        $ref: '#/components/messages/DeadLettered'
+operations:
+  consumeReservationRequest:
+    action: receive
+    channel:
+      $ref: '#/channels/reservationRequests'
+    traits:
+      - $ref: '#/components/operationTraits/idempotentConsumer'
+  publishDecision:
+    action: send
+    channel:
+      $ref: '#/channels/reservationDecisions'
+components:
+  operationTraits:
+    idempotentConsumer:
+      description: Redelivery-safe — outcome lookup by orderId precedes any stock mutation
+  messages:
+    ReservationRequested:
+      payload:
+        type: object
+        required: [orderId, items]
+        properties:
+          orderId:
+            type: string
+          items:
+            type: array
+            minItems: 1
+            items:
+              type: object
+              required: [sku, quantity]
+              properties:
+                sku:
+                  type: string
+                quantity:
+                  type: integer
+                  minimum: 1
+      headers:
+        type: object
+        properties:
+          orderId:
+            type: string
+            description: Correlation identifier, mirrored into logs and DLQ
+    InventoryReserved:
+      payload:
+        type: object
+        required: [eventVersion, orderId, status, items, decidedAt]
+        properties:
+          eventVersion:
+            type: string
+            const: v1
+          orderId:
+            type: string
+          status:
+            type: string
+            const: RESERVED
+          items:
+            type: array
+            items:
+              type: object
+              required: [sku, quantity]
+              properties:
+                sku:
+                  type: string
+                quantity:
+                  type: integer
+          decidedAt:
+            type: string
+            format: date-time
+    InventoryReservationFailed:
+      payload:
+        type: object
+        required: [eventVersion, orderId, status, missingSkus, decidedAt]
+        properties:
+          eventVersion:
+            type: string
+            const: v1
+          orderId:
+            type: string
+          status:
+            type: string
+            const: FAILED
+          missingSkus:
+            type: array
+            items:
+              type: object
+              required: [sku, reason]
+              properties:
+                sku:
+                  type: string
+                reason:
+                  type: string
+                  enum: [INSUFFICIENT_STOCK, UNKNOWN_SKU, INVALID_QUANTITY, INVALID_REQUEST]
+          decidedAt:
+            type: string
+            format: date-time
+    DeadLettered:
+      payload:
+        type: object
+        required: [orderId, failureReason, retryCount, parkedAt]
+        properties:
+          orderId:
+            type: string
+            description: Null when the poison message had no parseable orderId
+            nullable: true
+          failureReason:
+            type: string
+          retryCount:
+            type: integer
+            const: 3
+          parkedAt:
+            type: string
+            format: date-time
