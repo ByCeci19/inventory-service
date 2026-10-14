@@ -1,0 +1,18 @@
+# Test profile (no Docker): H2 for JPA, Flyway off (create-drop), SCS binder
+# inert until EmbeddedKafka broker address is injected per-test.
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${spring.embedded.kafka.brokers:localhost:9092}
