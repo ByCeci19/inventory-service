@@ -22,7 +22,7 @@
 
 **Purpose**: Build alignment (R-1), package skeleton, messaging/persistence config, contract snapshots
 
-- [ ] T001 Align build.gradle to Spring Boot 3.x (pin exact minor at implement time and record it in specs/001-reserve-stock-order/plan.md Technical Context) + Spring Cloud BOM + spring-cloud-stream binder-kafka 4.x + springdoc-openapi 2.x + flyway-core + test deps (H2, karate-junit5) in build.gradle
+- [X] T001 Align build.gradle to Spring Boot 3.x (pin exact minor at implement time and record it in specs/001-reserve-stock-order/plan.md Technical Context) + Spring Cloud BOM + spring-cloud-stream binder-kafka 4.x + springdoc-openapi 2.x + flyway-core + test deps (H2, karate-junit5) in build.gradle
 - [ ] T002 [P] Create DDD package skeleton domain/application/infrastructure under src/main/java/com/example/inventory_service/
 - [ ] T003 [P] Consolidate configuration into a single src/main/resources/application.yml (retire src/main/resources/application.properties to avoid dual sources): SCS bindings (maxAttempts=4, exponential backOff intervals, enableDlq, DLQ topic inventory.reservation.requests.dlq per contracts/asyncapi.yaml), datasource profiles, data-mongo, flyway (validate in prod, disabled in tests where H2 + JPA create-drop applies)
 - [ ] T004 [P] Snapshot reviewed contracts to src/main/resources/contracts/openapi.yaml and src/main/resources/contracts/asyncapi.yaml

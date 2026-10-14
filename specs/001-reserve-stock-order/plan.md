@@ -12,7 +12,7 @@ Idempotent, all-or-nothing stock reservation keyed by `orderId`. Intake is a syn
 
 **Language/Version**: Java 21 (Temurin 21.0.4, verified on host)
 
-**Primary Dependencies**: Spring Boot 3.x (align build to constitution; see Research R-1) + Spring Cloud Stream `binder-kafka` 4.x BOM line, Spring Data JPA, Spring Data MongoDB, Bean Validation, springdoc-openapi 2.x, Spring for Apache Kafka (transitive via binder)
+**Primary Dependencies**: Spring Boot 3.5.16 (pinned 2026-10-14, T001) + Spring Cloud BOM 2025.0.3 (`spring-cloud-stream`/`binder-kafka` 4.3.3), Spring Data JPA, Spring Data MongoDB, Flyway, Bean Validation, springdoc-openapi 2.9.1, Spring for Apache Kafka (transitive via binder), Spring for Apache Kafka (transitive via binder)
 
 **Storage**: PostgreSQL via JPA (production); H2 (tests, default mode, JPQL only — no native queries). MongoDB via Spring Data MongoDB for audit/event history (production); mocked audit port in tests (no embedded Mongo dependency).
 
