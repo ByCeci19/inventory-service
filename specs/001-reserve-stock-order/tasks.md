@@ -45,7 +45,7 @@
 - [X] T012 Create InventoryPort JPA adapter (load stock snapshot, save decrements + reservation row in one transaction) in src/main/java/com/example/inventory_service/infrastructure/persistence/jpa/JpaInventoryAdapter.java (depends on T010, T011)
 - [X] T013 Create test fixtures (seeded SKU-A x10, SKU-B x5 builders) in src/test/java/com/example/inventory_service/fixtures/InventoryFixtures.java
 - [X] T014 [P] Create validation/exception wiring (empty items and non-positive qty map to FAILED outcome with INVALID_REQUEST, no stock change) in src/main/java/com/example/inventory_service/infrastructure/web/ReservationExceptionHandler.java
-- [ ] T015 Create Flyway V1 baseline migration (stock_item, reservation + lines/missing tables incl. UNIQUE constraint on reservation.order_id; prod profile validates/migrates, tests stay on H2 create-drop) in src/main/resources/db/migration/V1__baseline.sql (depends on T011 table design)
+- [X] T015 Create Flyway V1 baseline migration (stock_item, reservation + lines/missing tables incl. UNIQUE constraint on reservation.order_id; prod profile validates/migrates, tests stay on H2 create-drop) in src/main/resources/db/migration/V1__baseline.sql (depends on T011 table design)
 
 **Checkpoint**: Foundation ready — domain, ports, JPA adapter, migration, fixtures compile; user stories can now proceed
 
